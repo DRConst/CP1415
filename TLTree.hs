@@ -54,8 +54,8 @@ auxAna (((a,b),c),n) = i2((t1,t2),t3)       --i2 (((Tri((a,b),c2)), (Tri((a + c2
 curr :: Tri -> Int -> (Tri, Int)
 curr a b = (a,b)
 
---geraSierp :: Tri -> Int -> TLTree
---geraSierp = (anaTLTree auxAna) . curr
+geraSierp :: (Tri,Int) -> TLTree
+geraSierp = (anaTLTree auxAna)
 
 apresentaSierp :: TLTree -> [Tri]
 apresentaSierp = cataTLTree ( either singl conc3 )
