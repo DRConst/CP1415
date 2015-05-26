@@ -4,16 +4,16 @@ import System.Process
 type Tri = (Point, Side)
 type Side = Int
 type Point = (Int,Int)
-data TLTree = Tri Tri | Nodo TLTree TLTree TLTree deriving (Show, Eq)
+data TLTree = Tri Tri | Nodo ((TLTree, TLTree), TLTree) deriving (Show, Eq)
 
 tri = Tri ((0,0),256)
-n = Nodo tri tri tri
-t = Nodo n n tri
+n = Nodo ((tri, tri), tri)
+t = Nodo ((n, n), tri)
 
-inTLTree = either Tri ((uncurry . uncurry) Nodo)
+inTLTree = either Tri Nodo
 
 outTLTree :: TLTree -> Either Tri ((TLTree,TLTree),TLTree)
-outTLTree (Nodo a b c)  = i2 ((a,b),c)
+outTLTree (Nodo a)  = i2 (a)
 outTLTree (Tri a) = i1 a
 
 recTLTree f = id -|- ((f >< f) >< f)
@@ -68,3 +68,4 @@ rep [] = ""
 rep (h:t) = (drawTriangle h) ++ rep t
 
 render html = do {writeFile "_.html" html; system "open _.html"}
+
