@@ -866,7 +866,14 @@ data TLTree a = L a | N (TLTree a,(TLTree a,TLTree a)) deriving (Eq,Show)
 \subsection*{Secção \ref{sec:monads}}
 Defina
 \begin{code}
-gene = undefined
+a1 () = D[(["stop"],0.9), ([], 0.1)]
+--a2 (a, []) =   D[(cons (a,[]),0.95), (["stop"],0.10)]
+a2 (a,b) = D[(cons (a,b),0.95), (b,0.05)]
+
+
+--gene :: Either () (a,[a]) -> Dist [a]
+gene = either a1 a2
+--asdf = D[(cons, 0.95), (snd ,0.5)]
 \end{code}
 e responda ao problema do enunciado aqui.
 
