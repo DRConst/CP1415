@@ -689,8 +689,11 @@ main = getArgs >>= cond (not . null) exemp_or_exer errInvArgs
         execExemp = cond isPar execExempPar execExempSeq
         exer = cond (((==) 3) . length) execExer errInvArgs
         execExer = cond isPar execExerPar execExerSeq
-        execExempSeq = const (putStrLn . show . (map fib) $ [20..30])      
-        execExempPar = const (putStrLn . show . runEval . (parmap fib) $ [20..30])
+        execExempSeq = const (putStrLn . show . (fmap fib) $ t1 )      
+        execExempPar = const (putStrLn . show . runEval . (parBTreeMap fib) $ t1)
+
+       -- execExempSeq = const (putStrLn . show . (map fib) $ [20..30])      
+       -- execExempPar = const (putStrLn . show . runEval . (parmap fib) $ [20..30])
 \end{code}
 
 \section{Bibliotecas e código auxiliar}
@@ -799,7 +802,11 @@ balance = undefined
 \subsection*{Secção \ref{sec:BTree}}
 \begin{code}
 qsplit :: Integral a => (a, a) -> Either () (a, ((a, a), (a, a)))
-qsplit = undefined
+qsplit (a,b)
+        | b > a = i2 ((a `quot` 2) + (b `quot` 2) , ((a, (a `quot` 2) + (b `quot` 2) - 1 ),(((a `quot` 2) + (b `quot` 2) + 1), b)))
+        | b == a = i2 (b, ((b, b - 1),((b + 1),b)))
+        | otherwise = i1()
+
 \end{code}
 
 \subsection*{Secção \ref{sec:SList}}
@@ -867,20 +874,24 @@ data TLTree a = L a | N (TLTree a,(TLTree a,TLTree a)) deriving (Eq,Show)
 Defina
 \begin{code}
 a1 () = D[(["stop"],0.9), ([], 0.1)]
---a2 (a, []) =   D[(cons (a,[]),0.95), (["stop"],0.10)]
 a2 (a,b) = D[(cons (a,b),0.95), (b,0.05)]
-
-
---gene :: Either () (a,[a]) -> Dist [a]
 gene = either a1 a2
---asdf = D[(cons, 0.95), (snd ,0.5)]
 \end{code}
-e responda ao problema do enunciado aqui.
+
+ ["Vamos","atacar","hoje","stop"]  77.2%
+ ["Vamos","hoje","stop"]   4.1%
+ ["Vamos","atacar","hoje"]   8.6%
 
 \subsection*{Secção \ref{sec:parBTreeMap}}
 Defina
 \begin{code}
-parBTreeMap = undefined
+--asdf
+parBTreeMap f (Empty) = return Empty
+parBTreeMap f (Node (a, (t1,t2))) = do
+	a' <- rpar (f a)
+	t1' <- parBTreeMap f t1 
+	t2' <- parBTreeMap f t2
+	return (Node (a', (t1', t2')))
 \end{code}
 e apresente aqui os resultados das suas experiências com essa função.
 
